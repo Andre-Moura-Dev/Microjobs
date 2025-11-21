@@ -11,7 +11,7 @@ O **MicroJobs** é uma plataforma web que conecta freelancers a pequenos trabalh
 ## Tecnologias Utilizadas
 - **Frontend:** HTML, CSS, JavaScript (depois vamos passa-lo para o React)
 - **Backend:** (Python + Flask)
-- **Mobile:** (React-Native + Node.js)
+- **Mobile:** (React-Native + Node.js (futuramente))
 - **Banco de Dados:** (Postgres)
 - **Autenticação:** JWT / OAuth
 - **Outras ferramentas:** (Postman para testes)
@@ -20,3 +20,4 @@ O **MicroJobs** é uma plataforma web que conecta freelancers a pequenos trabalh
 1. Clone o repositório:
 ```bash
 git clone https://github.com/seu-usuario/microjobs.git
+```

@@ -1,199 +1,211 @@
-document.addEventListener('DOMContentLoaded', function () {
-
-    // ---- Cadastro ----
-    const formFreelancer = document.getElementById('form-freelancer');
-    const formCliente = document.getElementById('form-cliente');
-
-    if (formFreelancer) {
-        formFreelancer.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const nome = document.getElementById('freelancerNome').value;
-            const email = document.getElementById('freelancerEmail').value;
-            const senha = document.getElementById('freelancerSenha').value;
-            const servico = document.getElementById('freelancerServico').value;
-            const descricao = document.getElementById('freelancerDescricao').value;
-
-            if (!nome || !email || !senha || !servico) {
-                alert("Preencha todos os campos obrigatórios");
-                return;
-            }
-
-            let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-            if (usuarios.some(u => u.email === email)) {
-                alert("Usuário já cadastrado!");
-                return;
-            }
-
-            usuarios.push({
-                nome,
-                email,
-                senha,
-                tipo: "profissional",
-                servico,
-                descricao
-            });
-            localStorage.setItem("usuarios", JSON.stringify(usuarios));
-
-            alert("Cadastro realizado com sucesso!");
-            window.location.href = "login.html";
-        });
-    }
-
-    if (formCliente) {
-        formCliente.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const nome = document.getElementById('clienteNome').value;
-            const email = document.getElementById('clienteEmail').value;
-            const senha = document.getElementById('clienteSenha').value;
-
-            if (!nome || !email || !senha) {
-                alert("Preencha todos os campos obrigatórios");
-                return;
-            }
-
-            let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-            if (usuarios.some(u => u.email === email)) {
-                alert("Usuário já cadastrado!");
-                return;
-            }
-
-            usuarios.push({
-                nome,
-                email,
-                senha,
-                tipo: "cliente"
-            });
-
-            localStorage.setItem("usuarios", JSON.stringify(usuarios));
-
-            alert("Cadastro realizado com sucesso!");
-            window.location.href = "login.html";
-        });
-    }
-
-    // ---- Login ----
-    const formLogin = document.getElementById('form-login');
-    if (formLogin) {
-        formLogin.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('loginEmail').value;
-            const senha = document.getElementById('loginSenha').value;
-
-            let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-            let usuario = usuarios.find(u => u.email === email && u.senha === senha);
-
-            if(!usuario) {
-                alert("Email ou senha inválidos!");
-                return;
-            }
-
-            localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
-
-            if (usuario.tipo === 'cliente') {
-                window.location.href = "../pages/search.html";
-            } else {
-                window.location.href = "../pages/my-services.html";
-            }
-        });
-    }
-
-    // ---- Proteção de Páginas ----
-    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
-    if (window.location.pathname.includes("search.html") ||
-        window.location.pathname.includes('profile.html')) {
-        if (!usuario || usuario.tipo !== "cliente") {
-            alert("Acesso restrito! Faça login como cliente!");
-            window.location.href = "./login.html";
-        }
-    }
-
+document.addEventListener('DOMContentLoaded', () => {
     init();
 });
 
-// ---- Atualizar nome na navbar ----
+function cadastrarUsuarios(tipo, dadosExtras = {}) {
+    const {nome, email, senha} = dadosExtras;
+
+    if (!nome || !email || !senha) {
+        exibirMensagem("Preencha todos os campos obrigatórios.", "error");
+        return false;
+    }
+
+    let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+    if (usuarios.some(u => u.email === email)) {
+        exibirMensagem("Usuário já cadastrado!", "error");
+    }
+
+    const usuario = {
+        nome,
+        email,
+        senha: hashSenha(senha),
+        tipo,
+        servico: dadosExtras.servico || "",
+        descricao: dadosExtras.descricao || "",
+        img: dadosExtras.img || ""
+    };
+
+    usuarios.push(usuario);
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+    exibirMensagem("Cadastro realizado com sucesso!", "success");
+    setTimeout(() => window.location.href = "./login.html", 1500);
+
+    return true;
+}
+
+// criptografia da senha
+function hashSenha(senha) {
+    return btoa(senha);
+}
+
+function loginUsuario(email, senha, tipo) {
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const senhaHash = hashSenha(senha);
+    const usuario = usuarios.find(u =>
+        u.email === email &&
+        u.senha === senhaHash &&
+        u.tipo === tipo
+    );
+
+    if (!usuario) {
+        exibirMensagem("Email ou senha inválidos!", "error");
+        return;
+    }
+
+    localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+    exibirMensagem("Login realizado com sucesso!", "success");
+
+    atualizarNomeUsuario(); // Mostra nome usuário na navBar
+
+    setTimeout(() => {
+        if (usuario.tipo === "cliente") {
+            window.location.href = "../pages/search.html";
+        } else {
+            window.location.href = "../pages/my-services.html";
+        }
+    }, 1000);
+}
+
+function configurarLogout() {
+    const btnLogout = document.getElementById("btn-logout");
+    if(btnLogout) {
+        btnLogout.addEventListener("click", () => {
+            localStorage.removeItem("usuarioLogado");
+            exibirMensagem("Usuário Deslogado!", "info");
+            setTimeout(() => window.location.href = "./login.html", 1000);
+        });
+    }
+}
+
+function protecaoPaginas() {
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+    const accessRules = {
+        "search.html": "cliente",
+        "profile.html": "cliente",
+        "my-services.html": "profissional"
+    };
+
+    const currentPage = window.location.pathname.split("/").pop();
+    const acessoNecessario = accessRules[currentPage];
+
+    if (acessoNecessario && (!usuario || usuario.tipo !== acessoNecessario)) {
+        alert("Acesso Restrito! Faça login com seu email e senha!", "error");
+        setTimeout(() => window.location.href = "./login.html", 2000);
+    }
+}
+
+function configurarDarkMode() {
+    const toggle = document.getElementById("darkModeToggle");
+    if(!toggle) return;
+    
+    toggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const ativo = document.body.classList.contains("dark-mode");
+        localStorage.setItem("darkMode", ativo ? "enabled" : "disabled");
+        toggle.textContent = ativo ? '☀️' : '🌙';
+    });
+}
+
+function aplicarDarkMode() {
+    const ativo = localStorage.getItem("darkMode") === "enabled";
+    document.body.classList.toggle("dark-mode", ativo);
+    const toggle = document.getElementById("darkModeToggle");
+    if(toggle) toggle.textContent = ativo ? '☀️' : '🌙';
+}
+
 function atualizarNomeUsuario() {
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
-    const nomeUsuario = document.getElementById('nome-usuario');
-
+    const nomeUsuario = document.getElementById("nome-usuario");
     if (nomeUsuario && usuario) {
         nomeUsuario.textContent = usuario.nome.split(" ")[0];
     }
 }
 
-// ---- Logout ----
-function logout() {
-    const btnLogout = document.getElementById('btn-logout');
-
-    if (btnLogout) {
-        btnLogout.addEventListener('click', function () {
-            localStorage.removeItem("usuarioLogado");
-            alert("Você saiu com sucesso!");
-            window.location.href = "./login.html";
-        });
-    }
-}
-
-// ---- Carregar lista de profissionais ----
 function carregarListaProfissionais() {
-    const lista = document.getElementById('lista-profissionais');
-    if (!lista) return;
+    const lista = document.getElementById("lista-profissionais");
+    if(!lista) return;
 
-    const profissionais = [
-        {nome: "Ana Clara", servico: "Desenvolvedora", preco: "170/hora", img: "../assets/profissionais/Ana Clara.jpg"},
-        {nome: "Carlos Mendes", servico: "Encanador", preco: "70/dia", img: "../assets/profissionais/Carlos Mendes.jpg"},
-        {nome: "João Silva", servico: "Eletricista", preco: "80/dia", img: "../assets/profissionais/João Silva.jpg"},
-        {nome: "Beatriz Almeida", servico: "Professora de Matemática", preco: "90/hora", img: "../assets/profissionais/Beatriz Almeida.jpg"},
-        {nome: "Lucas Ferreira", servico: "Designer Gráfico", preco: "100/hora", img: "../assets/profissionais/Lucas Ferreira.jpg"}
-    ];
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const profissionais = usuarios.filter(u => u.tipo === "profissional");
 
-    lista.innerHTML = "";
-    profissionais.forEach((p) => {
-        lista.innerHTML += `
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <img src="${p.img}" class="card-img-top rounded-top" alt="${p.nome}">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">${p.nome}</h5>
-                        <p class="text-muted">${p.servico} • R$ ${p.preco}</p>
-                        <p class="card-text flex-grow-1">Profissional experiente e bem avaliado.</p>
-                        <a href="./profile.html" class="btn btn-outline-primary btn-sm mt-2">Ver Perfil</a>
-                    </div>
+    if(profissionais.length === 0) {
+        lista.innerHTML = "<p class='text-center'>Nenhum profissional cadastrado ainda.</p>";
+        return;
+    }
+
+    lista.innerHTML = profissionais.map(p => `
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <img src="${p.img || '../assets/default.jpg'}" class="card-img-top rounded-top" alt="${p.nome}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${p.nome}</h5>
+                    <p class="text-muted">${p.servico || 'Serviço não informado'}</p>
+                    <p class="card-text flex-grow-1">${p.descricao || 'Profissional cadastrado recentemente.'}</p>
+                    <a href="./profile.html" class="btn btn-outline-primary btn-sm mt-2">Ver Perfil</a>
                 </div>
             </div>
-        `;
-    });
+        </div>
+    `).join('');
 }
 
-// ---- Dark Mode ----
-function configurarDarkMode() {
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    if (!darkModeToggle) return;
+function exibirMensagem(msg, tipo = "info") {
+    const container = document.createElement("div");
+    container.className = `alert alert-${tipo} position-fixed top-0 start-50 translate-middle-x mt-3`;
+    container.style.zIndex = "2000";
+    container.style.minWidth = "300px";
+    container.textContent = msg;
 
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        document.body.classList.add('dark-mode');
-        darkModeToggle.textContent = '☀️';
+    document.body.appendChild(container);
+    setTimeout(() => container.remove(), 2000);
+}
+
+function init() {
+    configurarLogout();
+    protecaoPaginas();
+    atualizarNomeUsuario();
+    configurarDarkMode();
+    carregarListaProfissionais();
+    configurarFormularios();
+}
+
+function configurarFormularios() {
+    // Freelancer
+    const formFreelancer = document.getElementById("form-freelancer");
+    if (formFreelancer) {
+        formFreelancer.addEventListener("submit", e => {
+            e.preventDefault();
+            cadastrarUsuarios("profissional", {
+                nome: freelancerNome.value,
+                email: freelancerEmail.value,
+                senha: freelancerSenha.value,
+                servico: freelancerServico.value,
+                descricao: freelancerDescricao.value
+            });
+        });
     }
 
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
+    // Cliente
+    const formCliente = document.getElementById("form-cliente");
+    if(formCliente) {
+        formCliente.addEventListener("submit", e => {
+            e.preventDefault();
+            cadastrarUsuarios("cliente", {
+                nome: clienteNome.value,
+                email: clienteEmail.value,
+                senha: clienteSenha.value,
+                tipo: clienteTipo.value
+            });
+        });
+    }
 
-        if (document.body.classList.contains('dark-mode')) {
-            localStorage.setItem('darkMode', 'enabled');
-            darkModeToggle.textContent = '☀️'
-        } else {
-            localStorage.setItem('darkMode', 'disabled');
-            darkModeToggle.textContent = '🌙'
-        }
-    });
-}
-
-// ---- Inicialização ----
-function init() {
-    atualizarNomeUsuario();
-    logout();
-    carregarListaProfissionais();
-    configurarDarkMode();
+    // Login
+    const formLogin = document.getElementById("form-login");
+    if(formLogin) {
+        formLogin.addEventListener("submit", e => {
+            e.preventDefault();
+            loginUsuario(loginEmail.value, loginSenha.value, tipo.value);
+        })
+    }
 }

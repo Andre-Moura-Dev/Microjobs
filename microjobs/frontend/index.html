@@ -10,22 +10,22 @@
 <body>
     
     <!-- Nav-Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="./index.html">Microjobs</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+            <a class="navbar-brand fw-bold fs-3" href="./index.html">Microjobs</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
 
-            <div class="collapse navbar-collapse" id="nav">
-                <ul class="navbar-nav ms-auto align-items-lg-center">
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-lg-center gap-2">
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="servicosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="servicosDropdown" role="button" data-bs-toggle="dropdown">
                             Serviços
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                        <ul class="dropdown-menu dropdow-menu-end">
                             <li><a class="dropdown-item" href="./pages/search.html">Buscar Serviços</a></li>
                             <li><a class="dropdown-item" href="./pages/publish.html">Publicar Serviços</a></li>
                             <li><a class="dropdown-item" href="./pages/details.html">Detalhes do Serviço</a></li>
@@ -33,8 +33,8 @@
                             <li><a class="dropdown-item" href="./pages/publish.html">Publicações</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="btn btn-light text-primary ms-2" href="./pages/login.html">Entrar</a></li>
-                    <li class="nav-item"><a class="btn btn-light text-primary ms-2" href="./pages/register.html">Cadastrar</a></li>
+                    <li class="nav-item"><a class="btn btn-light text-primary" href="./pages/login.html">Entrar</a></li>
+                    <li class="nav-item"><a class="btn btn-outline-light ms-2" href="./pages/register.html">Cadastrar</a></li>
 
                 </ul>
             </div>
@@ -44,12 +44,12 @@
     </nav>
 
     <!-- Hero -->
-    <section class="bg-light text-center py-5">
+    <section class="hero d-flex align-items-center text-center text-white">
         <div class="container">
-            <h1 class="fw-bold display-5">Encontre ou Ofereça Serviços Rápidos</h1>
-            <p class="lead text-muted">Conectamos profissionais autônomos a clientes em todo o Brasil.</p>
+            <h1 class="fw-bold display-5 mb-3">Encontre ou Ofereça Serviços Rápidos</h1>
+            <p class="lead text-light mb-4">Conectamos profissionais autônomos a clientes em todo o Brasil.</p>
             <div class="mt-4">
-                <a href="./pages/search.html" class="btn btn-primary btn-lg me-2">Buscar Serviços</a>
+                <a href="./pages/search.html" class="btn btn-light btn-lg me-2">Buscar Serviços</a>
                 <a href="./pages/search.html" class="btn btn-outline-primary btn-lg">Oferecer Serviços</a>
             </div>
         </div>
@@ -62,52 +62,52 @@
             <div class="row g-4">
                 <!-- Cards -->
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card h-100 shadow-sm border-0 card-hover">
                         <img src="./assets/Design Gráfico.webp" class="card-img-top" alt="Design Gráfico">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Design Gráfico</h5>
+                            <h5 class="fw-semibold mb-2">Design Gráfico</h5>
                             <p class="text-muted small">Logos, banners e identidade visual profissional.</p>
-                            <a href="./pages/search.html?service=design" class="btn btn-sm btn-primary">Ver Profissionais</a>
+                            <a href="./pages/search.html?service=design" class="btn btn-primary btn-sm">Ver Profissionais</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card h-100 shadow-sm border-0 card-hover">
                         <img src="./assets/Eletricista.jpg" class="card-img-top" alt="Eletricista">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Eletricista</h5>
+                            <h5 class="fw-semibold mb-2">Eletricista</h5>
                             <p class="text-muted small">Instalações, reparos e manutenção elétrica residencial.</p>
-                            <a href="./pages/search.html?service=eletricista" class="btn btn-sm btn-primary">Ver Profissionais</a>
+                            <a href="./pages/search.html?service=eletricista" class="btn btn-primary btn-sm">Ver Profissionais</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card h-100 shadow-sm border-0 card-hover">
                         <img src="./assets/Encanador.webp" class="card-img-top" alt="Encanador">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Encanador</h5>
+                            <h5 class="fw-semibold mb-2">Encanador</h5>
                             <p class="text-muted small">Instalações, reparos e manutenção hidráulica residencial.</p>
-                            <a href="./pages/search.html" class="btn btn-sm btn-primary">Ver Profissionais</a>
+                            <a href="./pages/search.html" class="btn btn-primary btn-sm">Ver Profissionais</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card h-100 shadow-sm border-0 card-hover">
                         <img src="./assets/Matemática.jpg" class="card-img-top" alt="Matemática">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Matemática</h5>
+                            <h5 class="fw-semibold mb-2">Matemática</h5>
                             <p class="text-muted small">Professores particulares de matemática.</p>
-                            <a href="./pages/search.html?service=matematica" class="btn btn-sm btn-primary">Ver Profissionais</a>
+                            <a href="./pages/search.html?service=matematica" class="btn btn-primary btn-sm">Ver Profissionais</a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card h-100 shadow-sm border-0 card-hover">
                         <img src="./assets/Programação.webp" class="card-img-top" alt="Programação">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Desenvolvedor Web</h5>
+                            <h5 class="fw-semibold mb-2">Desenvolvedor Web</h5>
                             <p class="text-muted small">Sites, lojas e aplicativos com HTML, CSS, JS e muito mais.</p>
-                            <a href="./pages/search.html?service=web" class="btn btn-sm btn-primary">Ver Profissionais</a>
+                            <a href="./pages/search.html?service=web" class="btn btn-primary btn-sm">Ver Profissionais</a>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
 
     
     <!-- Rodapé -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
+    <footer class="bg-dark text-white text-center py-4">
         <div class="container">
             <small>&copy; 2025 Microjobs. Todos os direitos reservados.</small>
         </div>
